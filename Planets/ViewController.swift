@@ -22,46 +22,38 @@ class ViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         let sun = SCNNode(geometry: SCNSphere(radius: 0.35))
-        let earthParent = SCNNode()
-        let venusParent = SCNNode()
-        let moonParent = SCNNode()
         
         sun.geometry?.firstMaterial?.diffuse.contents = #imageLiteral(resourceName: "Sun diffuse")
         sun.position = SCNVector3(0,0,-1)
-        earthParent.position = SCNVector3(0,0,-1)
-        venusParent.position = SCNVector3(0,0,-1)
-        
-        // set the moon position to the starting position of the Earth
-        moonParent.position = SCNVector3(1.2,0,0)
         
         self.sceneView.scene.rootNode.addChildNode(sun)
-        self.sceneView.scene.rootNode.addChildNode(earthParent)
-        self.sceneView.scene.rootNode.addChildNode(venusParent)
         
-        let earth = planet(geometry: SCNSphere(radius: 0.2), diffuse: #imageLiteral(resourceName: "Earth day"), specular: #imageLiteral(resourceName: "Earth Specular"), emission: #imageLiteral(resourceName: "Earth Emission"), normal: #imageLiteral(resourceName: "Earth Normal"), position: SCNVector3(1.4,0,0))
-        let venus = planet(geometry: SCNSphere(radius: 0.1), diffuse: #imageLiteral(resourceName: "Venus Surface"), specular: nil, emission: #imageLiteral(resourceName: "Venus Atmosphere"), normal: nil, position: SCNVector3(1.4,0,0))
-        let moon = planet(geometry: SCNSphere(radius: 0.05), diffuse: #imageLiteral(resourceName: "Moon Diffuse"), specular: nil, emission: nil, normal: nil, position: SCNVector3(0,0,-0.3))
-        
-        sun.addChildNode(earth)
+        let earth = generatePlanetWithOrbit(root: nil, orbitRoot: SCNVector3(0,0,-1), rotation: 14, geometry: SCNSphere(radius: 0.2), diffuse: #imageLiteral(resourceName: "Earth day"), specular: #imageLiteral(resourceName: "Earth Specular"), emission: #imageLiteral(resourceName: "Earth Emission"), normal: #imageLiteral(resourceName: "Earth Normal"), position: SCNVector3(1.4,0,0))
+        let venus = generatePlanetWithOrbit(root: nil, orbitRoot: SCNVector3(0,0,-1), rotation: 10, geometry: SCNSphere(radius: 0.1), diffuse: #imageLiteral(resourceName: "Venus Surface"), specular: nil, emission: #imageLiteral(resourceName: "Venus Atmosphere"), normal: nil, position: SCNVector3(1.4,0,0))
+        let moon = generatePlanetWithOrbit(root: earth, orbitRoot: SCNVector3(1.2,0,0), rotation: 5, geometry: SCNSphere(radius: 0.05), diffuse: #imageLiteral(resourceName: "Moon Diffuse"), specular: nil, emission: nil, normal: nil, position: SCNVector3(0,0,-0.3))
         
         let sunRotator = Rotation(time: 8)
-        let earthParentRotation = Rotation(time: 14)
-        let venusParentRotation = Rotation(time: 10)
-        let venusRotation = Rotation(time: 8)
-        let earthRotation = Rotation(time: 8)
-        let moonRotation = Rotation(time: 5)
         
         sun.runAction(sunRotator)
-        earth.runAction(earthRotation)
-        venus.runAction(venusRotation)
-        earthParent.runAction(earthParentRotation)
-        venusParent.runAction(venusParentRotation)
-        moonParent.runAction(moonRotation)
+    }
+    
+    func generatePlanetWithOrbit(root: SCNNode?, orbitRoot: SCNVector3, rotation: TimeInterval, geometry: SCNGeometry, diffuse: UIImage, specular: UIImage?, emission: UIImage?, normal: UIImage?, position: SCNVector3) -> SCNNode {
+
+        let parent = SCNNode()
+        parent.position = orbitRoot
+        self.sceneView.scene.rootNode.addChildNode(parent)
         
-        earthParent.addChildNode(earth)
-        earthParent.addChildNode(moonParent)
-        venusParent.addChildNode(venus)
-        moonParent.addChildNode(moon)
+        let newPlanet = planet(geometry: geometry, diffuse: diffuse, specular: specular, emission: emission, normal: normal, position: position)
+        
+        let planetRotation = Rotation(time: 8)
+        let rootRotation = Rotation(time: rotation)
+        
+        newPlanet.runAction(planetRotation)
+        parent.runAction(rootRotation)
+        parent.addChildNode(newPlanet)
+        root?.addChildNode(parent)
+        
+        return parent
     }
     
     func planet(geometry: SCNGeometry, diffuse: UIImage, specular: UIImage?, emission: UIImage?, normal: UIImage?, position: SCNVector3) -> SCNNode {
