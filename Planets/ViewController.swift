@@ -25,6 +25,8 @@ class ViewController: UIViewController {
         
         sun.geometry?.firstMaterial?.diffuse.contents = #imageLiteral(resourceName: "Sun diffuse")
         sun.position = SCNVector3(0,0,-1)
+        let sunRotator = Rotation(time: 8)
+        sun.runAction(sunRotator)
         
         self.sceneView.scene.rootNode.addChildNode(sun)
         
@@ -35,12 +37,9 @@ class ViewController: UIViewController {
         let mars = generatePlanetWithOrbit(root: nil, orbitRoot: SCNVector3(0,0,-1), rotation: 25, geometry: SCNSphere(radius: 0.1), diffuse: #imageLiteral(resourceName: "Mars Diffuse"), specular: nil, emission: nil, normal: nil, position: SCNVector3(6,0,0))
         let jupiter = generatePlanetWithOrbit(root: nil, orbitRoot: SCNVector3(0,0,-1), rotation: 40, geometry: SCNSphere(radius: 1), diffuse: #imageLiteral(resourceName: "Jupiter Diffuse"), specular: nil, emission: nil, normal: nil, position: SCNVector3(14,0,0))
         let saturn = generatePlanetWithOrbit(root: nil, orbitRoot: SCNVector3(0,0,-1), rotation: 50, geometry: SCNSphere(radius: 0.8), diffuse: #imageLiteral(resourceName: "Saturn Diffuse"), specular: nil, emission: nil, normal: nil, position: SCNVector3(15,0,0))
+        let saturnRing = generatePlanetWithOrbit(root: saturn, orbitRoot: SCNVector3(0,0,0), rotation: 0, geometry: SCNTorus(ringRadius: 1.2, pipeRadius: 0.1), diffuse: #imageLiteral(resourceName: "Moon Diffuse"), specular: nil, emission: nil, normal: nil, position: SCNVector3(15,0,0))
         let uranus = generatePlanetWithOrbit(root: nil, orbitRoot: SCNVector3(0,0,-1), rotation: 80, geometry: SCNSphere(radius: 0.5), diffuse: #imageLiteral(resourceName: "Uranus Diffuse"), specular: nil, emission: nil, normal: nil, position: SCNVector3(18,0,0))
         let neptune = generatePlanetWithOrbit(root: nil, orbitRoot: SCNVector3(0,0,-1), rotation: 100, geometry: SCNSphere(radius: 0.45), diffuse: #imageLiteral(resourceName: "Neptune Diffuse"), specular: nil, emission: nil, normal: nil, position: SCNVector3(20,0,0))
-        
-        let sunRotator = Rotation(time: 8)
-        
-        sun.runAction(sunRotator)
     }
     
     func generatePlanetWithOrbit(root: SCNNode?, orbitRoot: SCNVector3, rotation: TimeInterval, geometry: SCNGeometry, diffuse: UIImage, specular: UIImage?, emission: UIImage?, normal: UIImage?, position: SCNVector3) -> SCNNode {
@@ -73,7 +72,8 @@ class ViewController: UIViewController {
     }
     
     func Rotation(time: TimeInterval) -> SCNAction {
-        let rotator = SCNAction.rotateBy(x:0, y: CGFloat(260.degreesToRadians), z: 0, duration: time)
+        let rotation = time != 0 ? 360.degreesToRadians : 0
+        let rotator = SCNAction.rotateBy(x:0, y: CGFloat(rotation), z: 0, duration: time != 0 ? time : 1)
         let foreverRotator = SCNAction.repeatForever(rotator)
         return foreverRotator
     }
