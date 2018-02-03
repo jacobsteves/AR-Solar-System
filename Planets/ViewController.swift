@@ -20,6 +20,9 @@ class ViewController: UIViewController {
         self.sceneView.autoenablesDefaultLighting = true
     }
     
+    /* When the view appears, we create the planet objects. The sun is unique and gets created first. Other planets are
+     * created by making a call to the generatePlanetWithOrbit
+     */
     override func viewDidAppear(_ animated: Bool) {
         let sun = SCNNode(geometry: SCNSphere(radius: 0.35))
         
@@ -42,6 +45,15 @@ class ViewController: UIViewController {
         let neptune = generatePlanetWithOrbit(root: nil, orbitRoot: SCNVector3(0,0,-1), rotation: 100, geometry: SCNSphere(radius: 0.45), diffuse: #imageLiteral(resourceName: "Neptune Diffuse"), specular: nil, emission: nil, normal: nil, position: SCNVector3(20,0,0))
     }
     
+    /* Create a planet and a planet parent and have the planet orbit the planet parent. This simulates the gravitational
+     * orbit that the sun creates. As planets get farther from the sun, the gravitational pull is weaker, so the orbit is
+     * slower. This approach lets us change the speed that the planet parent's children orbit, so as the planet gets
+     * farther from the sun, we can just decrease this speed.
+     *
+     * @return SCNNode -    The planet parent. This is the object that lets the planet orbit. If creating a moon, you
+     *                      want root to be the planet parent of the moon's planet. (eg, Earth is the moons planet
+     *                      parent)
+     */
     func generatePlanetWithOrbit(root: SCNNode?, orbitRoot: SCNVector3, rotation: TimeInterval, geometry: SCNGeometry, diffuse: UIImage, specular: UIImage?, emission: UIImage?, normal: UIImage?, position: SCNVector3) -> SCNNode {
 
         let parent = SCNNode()
