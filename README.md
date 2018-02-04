@@ -3,7 +3,7 @@ Our Solar System simulated in front of you with Augmented Reality. This project 
 
 Planet Bundle |  Detailed Earth | Saturn & Venus | Earth & Saturn
 :----------:|:-------:|:-------:|:-------:
-![](demo/bunch-of-planets.png) | ![](demo/earth-light.png) | ![](demo/saturn-venus-dark.png) | ![](demo/earth-saturn-dark.png)
+![](demo/bunch-of-planets.png) | ![](demo/earth-light.png) | ![](demo/saturn-venus-dark.jpeg) | ![](demo/earth-saturn-dark.jpeg)
 
 ## Getting Started
 ### Prerequisites
